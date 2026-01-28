@@ -1,14 +1,27 @@
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import './App.css'
-import './pages/HomePage'
 import HomePage from './pages/HomePage'
+import AboutUs from './pages/AboutUs'
+import ContactUs from './pages/ContactUs'
+// import SignIn from './pages/SignIn'
+// import SignUp from './pages/SignUp'
+// import NotFound from './pages/NotFound'
 
 function App() {
 
   return (
     <>
-    <h1>Hello SuccessFull</h1>
-     
-      <HomePage/>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<Navigate replace to='/home' />} />
+          <Route path='/home' element={<HomePage />} />
+          <Route path='/aboutus' element={<AboutUs />} />
+          <Route path='/contactus' element={<ContactUs />} />
+          {/* <Route path='/signin' element={<SignIn />} />
+          <Route path='/signup' element={<SignUp />} />
+          <Route path='*' element={<NotFound />} /> */}
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }

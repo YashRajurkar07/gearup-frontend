@@ -8,6 +8,6 @@ import App2 from './pages/BackUpFile';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App2 />
+    <App />
   </StrictMode>,
 )
