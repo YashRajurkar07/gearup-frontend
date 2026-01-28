@@ -32,8 +32,8 @@ const HomePage = () => {
             style={{color: '#e5e7eb' }}
           >
             <h1 className="fw-bold display-5">
-              Book Garage Appointments{' '}
-              <span style={{ color: '#f97316' }}>Smarter</span>
+              Book Your Appointments{' '}
+              <span style={{ color: '#f97316' }}>Now</span>
             </h1>
             <p className="lead text-secondary mt-3">
               Real-Time Slots · Verified Garages · Secure Payments
