@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="row gy-3">
 
           <div className="col-md-4">
-            <h5 className="text-light">GearUp</h5>
+            <h5>Gear<span style={{ color: '#f97316' }}>Up</span></h5>
             <p className="small">
               Smart garage booking platform with secure payments
               and real-time slot management.
