@@ -35,7 +35,7 @@ const HomePage = () => {
               Book Garage Appointments{' '}
               <span style={{ color: '#f97316' }}>Smarter</span>
             </h1>
-            <p className="lead text-secondary mt-3">
+            <p className="lead text-secondary mt-3 fw-semibold">
               Real-Time Slots · Verified Garages · Secure Payments
             </p>
             <Button href="/signup" size="lg" variant="warning" className="mt-4 mb-5 align-self-center">

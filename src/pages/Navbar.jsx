@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const AppNavbar = () => {
   return (
-    <Navbar expand="lg" style={{ backgroundColor: '#070c16' }} variant="dark">
+    <Navbar expand="lg" style={{ backgroundColor: '#070c16', paddingTop: '20px', paddingBottom: '20px' }} variant="dark">
       <Container>
         <Navbar.Brand as={Link} to="/home" className="fw-bold d-flex align-items-center gap-2">
          <div style={{

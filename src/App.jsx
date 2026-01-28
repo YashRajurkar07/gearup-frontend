@@ -3,8 +3,8 @@ import './App.css'
 import HomePage from './pages/HomePage'
 import AboutUs from './pages/AboutUs'
 import ContactUs from './pages/ContactUs'
-// import SignIn from './pages/SignIn'
-// import SignUp from './pages/SignUp'
+import SignIn from './pages/SignIn'
+import SignUp from './pages/Register'
 // import NotFound from './pages/NotFound'
 
 function App() {
@@ -17,9 +17,9 @@ function App() {
           <Route path='/home' element={<HomePage />} />
           <Route path='/aboutus' element={<AboutUs />} />
           <Route path='/contactus' element={<ContactUs />} />
-          {/* <Route path='/signin' element={<SignIn />} />
+          <Route path='/signin' element={<SignIn />} />
           <Route path='/signup' element={<SignUp />} />
-          <Route path='*' element={<NotFound />} /> */}
+          {/* <Route path='*' element={<NotFound />} /> */}
         </Routes>
       </BrowserRouter>
     </>
