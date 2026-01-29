@@ -1,5 +1,5 @@
-import AppNavbar from './Navbar';
-import Footer from './Footer';
+import AppNavbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { Button, Container, Row, Col, Card } from 'react-bootstrap';
 import { CalendarCheck, ShieldCheck, Star } from 'lucide-react';
 
@@ -38,7 +38,7 @@ const HomePage = () => {
             <p className="lead text-secondary mt-3 fw-semibold">
               Real-Time Slots · Verified Garages · Secure Payments
             </p>
-            <Button href="/signup" size="lg" variant="warning" className="mt-4 mb-5 align-self-center">
+            <Button href="/allcustomers" size="lg" variant="warning" className="mt-4 mb-5 align-self-center">
               Get Started
             </Button>
           </Container>

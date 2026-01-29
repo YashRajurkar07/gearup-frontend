@@ -4,7 +4,9 @@ import HomePage from './pages/HomePage'
 import AboutUs from './pages/AboutUs'
 import ContactUs from './pages/ContactUs'
 import SignIn from './pages/SignIn'
-import SignUp from './pages/Register'
+import SignUp from './pages/customer/RegisterCustomer'
+import SignUpOwner from './pages/owner/RegisterOwner'
+import CustomerDetails from './pages/customer/CustomerDetails'
 // import NotFound from './pages/NotFound'
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
           <Route path='/contactus' element={<ContactUs />} />
           <Route path='/signin' element={<SignIn />} />
           <Route path='/signup' element={<SignUp />} />
+          <Route path='/signupowner' element={<SignUpOwner />} />
+          <Route path='/allcustomers' element={<CustomerDetails />} />
           {/* <Route path='*' element={<NotFound />} /> */}
         </Routes>
       </BrowserRouter>

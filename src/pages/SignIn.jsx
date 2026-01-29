@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { Navigate } from 'react-router-dom';
-import AppNavbar from './Navbar';
-import Footer from './Footer';
+import AppNavbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const SignIn = () => {
 
@@ -16,24 +16,30 @@ const SignIn = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle sign-in logic here
+        try {
+            // Handle sign-in logic here
+
+            Navigate('/home');
+        } catch (error) {
+            alert("Error Signing In" + error);
+        }
     }
 
     return (
         <>
-            <div style={{ backgroundColor: "#070c16"}}>
+            <div style={{ backgroundColor: "#070c16" }}>
                 <AppNavbar />
                 <Container className="my-5">
                     <Row className="justify-content-center text-light">
                         <Col md={6}>
-                        <h1>Sign In to Your Account</h1>
+                            <h1>Sign In to Your <span style={{ color: '#f97316' }}>Account</span></h1>
 
                             <Form onSubmit={handleSubmit}>
                                 <Form.Group className="mb-3 mt-4" controlId="formBasicEmail">
-                                    <Form.Label>Email address</Form.Label>
+                                    <Form.Label>Email Address</Form.Label>
                                     <Form.Control
                                         type="email"
-                                        placeholder="Enter email"
+                                        placeholder="Enter Email"
                                         name="email"
                                         value={userDetails.email}
                                         onChange={handleUserInput}
@@ -55,7 +61,12 @@ const SignIn = () => {
                                     Sign In
                                 </Button>
                             </Form>
+                            <p className="d-flex align-items-center mt-3">
+                                <span>Do Not Have an Account? <a href="/signup"><Button variant="outline-success" type="button">Register</Button></a>
+                                </span>
+                            </p>
                         </Col>
+
                     </Row>
                 </Container >
             </div>

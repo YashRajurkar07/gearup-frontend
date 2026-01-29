@@ -6,7 +6,7 @@ const Footer = () => {
       className="mt-auto"
       style={{ backgroundColor: '#070c16', color: '#9ca3af' }}
     >
-      <div className="container py-4">
+      <div className="container py-3">
         <div className="row gy-3">
 
           <div className="col-md-4">
@@ -37,7 +37,7 @@ const Footer = () => {
         <hr className="border-secondary" />
 
         <p className="text-center small mb-0">
-          &copy; {new Date().getFullYear()} GearUp Service Portal
+          &copy; {new Date().getFullYear()} GearUp Service Portal. All Rights Reserved.
         </p>
       </div>
     </footer>

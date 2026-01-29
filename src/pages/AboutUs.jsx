@@ -1,11 +1,11 @@
-import Navbar from './Navbar';
-import Footer from './Footer';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const AboutUs = () => {
   return (
     <>
       <Navbar />
-      <div className="bg-dark text-light">
+      <div className="bg-dark text-light min-rh-100 py-5">
         <div className="container py-5">
         <h2>About Gearup Service Portal </h2>
         <p className="mt-3">
