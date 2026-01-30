@@ -2,29 +2,29 @@ import Api from './Api';
 
 class CustomerService {
 
-  getAllCustomers () {
+  getAllCustomers() {
 
     return Api.get('/customer/getallcustomers');
   }
 
-    getCustomerById (customerId) {
+  getCustomerById(customerId) {
     return Api.get(`/customer/getcustomerbyid/${customerId}`);
-    }
+  }
 
-    registerCustomer (customer) {
+  registerCustomer(customer) {
 
     return Api.post('/customer/register', customer);
-    }
+  }
 
-    updateCustomer (customerId, customer) {
+  updateCustomer(customerId, customer) {
 
     return Api.put(`/customer/updatecustomerdetails/${customerId}`, customer);
-    }
+  }
 
-    deleteCustomer (customerId) {
+  deleteCustomer(customerId) {
 
     return Api.delete(`/customer/deletemyaccount/${customerId}`);
-    }
+  }
 
 };
 

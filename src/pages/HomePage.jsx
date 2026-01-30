@@ -38,7 +38,7 @@ const HomePage = () => {
             <p className="lead text-secondary mt-3 fw-semibold">
               Real-Time Slots · Verified Garages · Secure Payments
             </p>
-            <Button href="/allcustomers" size="lg" variant="warning" className="mt-4 mb-5 align-self-center">
+            <Button href="/updatecustomerdetails" size="lg" variant="warning" className="mt-4 mb-5 align-self-center">
               Get Started
             </Button>
           </Container>

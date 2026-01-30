@@ -156,8 +156,8 @@ const RegisterCustomer = () => {
                 <div className="text-center">
                   <button type="submit" className="btn btn-success btn-lg mt-3">Register Now</button>
                 </div>
+                
               </form>
-
 
             </div>
           </div>

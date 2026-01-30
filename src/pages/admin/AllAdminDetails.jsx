@@ -1,22 +1,19 @@
 import { useState, useEffect } from "react";
-import CustomerService from "../../apis/CustomerService";
+import { Navigate } from "react-router-dom";
 import Navbar from '../../components/Navbar';
 import Footer from "../../components/Footer";
+import AdminService from "../../apis/AdminService";
 
-const CustomerDetails = () => {
+const UpdateAdminDetails = () => {
 
-    const [customers, setCustomers] = useState([]);
-
-
+    const [allAdmins, setAdminDetails] = useState([]);
 
     const loadData = async () => {
-
         try {
-            const response = await CustomerService.getAllCustomers();
-            setCustomers(response.data);
-
+            const response = await AdminService.getAdminById(101);
+            setAdminDetails(response.data);
         } catch (error) {
-            alert("Error loading customer data" + error);
+            alert("Error Loading Admin Data" + error);
         }
     }
 
@@ -24,16 +21,16 @@ const CustomerDetails = () => {
         loadData();
     }, []);
 
-    return (
+     return (
         <>
-        <Navbar />
+            <Navbar />
             <div className="container mt-5">
-                <h2>Customer Details</h2>
+                <h2>Admin Details</h2>
                 <table className="table table-bordered mt-3">
 
             <thead>
                 <tr>
-                    <th>Customer ID</th>
+                    <th>Admin ID</th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
@@ -50,7 +47,7 @@ const CustomerDetails = () => {
                 </tr>
             </thead>
             <tbody>
-                {customers.map((c) => (
+                {allAdmins.map((c) => (
                     <tr key={c.userDetails.id}>
                         <td>{c.userDetails.id}</td>
                         <td>{c.userDetails.firstName}</td>
@@ -59,7 +56,6 @@ const CustomerDetails = () => {
                         <td>{c.userDetails.mobileNumber}</td>
                         <td>{c.userDetails.dateOfBirth}</td>
                         <td>{c.userDetails.gender}</td>
-                        <td>{c.licenseNumber}</td>
                         <td>{c.userDetails.address?.area ?? "No Data"}</td>
                         <td>{c.userDetails.address?.city ?? "No Data"}</td>
                         <td>{c.userDetails.address?.state ?? "No Data"}</td>
@@ -78,4 +74,4 @@ const CustomerDetails = () => {
 
 };
 
-export default CustomerDetails;
+export default UpdateAdminDetails;

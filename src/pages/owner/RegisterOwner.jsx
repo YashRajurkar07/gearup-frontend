@@ -1,41 +1,61 @@
-import { useState} from "react";
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import OwnerService from "../../apis/OwnerService";
 import AppNavbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
 const RegisterOwner = () => {
 
-    const [ownerDetails, setOwnerDetails] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        mobileNumber: '',
-        alternatePhone: '',
-        password: '',
-        confirmPassword: '',
-        dateOfBirth: '',
-        gender: '',
-        registrationNumber: '',
-        area: '',
+  const [ownerDetails, setOwnerDetails] = useState({
+    userDetails: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      mobileNumber: '',
+      dateOfBirth: '',
+      gender: '',
+      address: {
         city: '',
         state: '',
         country: '',
+        area: '',
         zipCode: ''
-    });
+      },
+    },
+    
+      alternatePhone: '',
+      registrationNumber: ''
+  });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Handle registration logic here
+  const handleSubmit =  async (e) => {
+    e.preventDefault();
+    try { 
+      const res = await OwnerService.registerOwner(ownerDetails);
+      alert(res.data.message);
+      Navigate('/signin');
+    } catch (error) {
+      console.error("Error Registering Owner:", error);
     }
+  }
 
-    const handleDetailsInput = (e) => {
+  const handleDetailsInput = (e) => {
 
-        const { name, value } = e.target;
-        setOwnerDetails(o => ({ ...o, [name]: value }));
-
+    const { name, value } = e.target;
+    
+    if (['area', 'city', 'state', 'country', 'zipCode'].includes(name)) {
+      setOwnerDetails(o => ({ ...o, userDetails: { ...o.userDetails, address: { ...o.userDetails.address, [name]: value } } }));
     }
+    else if (name === 'alternatePhone' || name === 'registrationNumber') {
+      setOwnerDetails(o => ({ ...o, [name]: value }));
+    } else{
+      setOwnerDetails(o => ({...o, userDetails: {...o.userDetails, [name]: value }}));
+    }
+  }
 
   return (
-   <>
+    <>
       <AppNavbar />
       <div className="container-fluid" style={{ backgroundColor: "#070c16" }}>
         <div className="container">
@@ -71,11 +91,11 @@ const RegisterOwner = () => {
                 </div>
 
                 <div className="row mb-3">
-                    <div className="col-md-6">
+                  <div className="col-md-6">
                     <label className="form-label">Alternate Phone :</label>
                     <input type="text" className="form-control" name="alternatePhone" value={ownerDetails.alternatePhone} onChange={handleDetailsInput} />
-                    </div>
-                    <div className="col-md-6">
+                  </div>
+                  <div className="col-md-6">
                     <label className="form-label">Registration Number :</label>
                     <input type="text" className="form-control" name="registrationNumber" value={ownerDetails.registrationNumber} onChange={handleDetailsInput} />
                   </div>

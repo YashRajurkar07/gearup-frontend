@@ -5,8 +5,11 @@ import AboutUs from './pages/AboutUs'
 import ContactUs from './pages/ContactUs'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/customer/RegisterCustomer'
-import SignUpOwner from './pages/owner/RegisterOwner'
 import CustomerDetails from './pages/customer/CustomerDetails'
+import UpdateCustomerDetails from './pages/customer/UpdateCustomerDetails'
+import SignUpOwner from './pages/owner/RegisterOwner'
+import RegisterGarage from './pages/owner/RegisterGarage'
+import RegisterAdmin from './pages/admin/RegisterAdmin'
 // import NotFound from './pages/NotFound'
 
 function App() {
@@ -23,6 +26,9 @@ function App() {
           <Route path='/signup' element={<SignUp />} />
           <Route path='/signupowner' element={<SignUpOwner />} />
           <Route path='/allcustomers' element={<CustomerDetails />} />
+          <Route path='/registergarage' element={<RegisterGarage />} />
+          <Route path='/registeradmin' element={<RegisterAdmin />} />
+          <Route path='/updatecustomerdetails' element={<UpdateCustomerDetails />} />
           {/* <Route path='*' element={<NotFound />} /> */}
         </Routes>
       </BrowserRouter>

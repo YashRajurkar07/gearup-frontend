@@ -2,29 +2,29 @@ import Api from './Api';
 
 class OwnerService {
 
-    getAllOwners () {
+    getAllOwners() {
 
-    return Api.get('/owner/getallowners');
+        return Api.get('/owner/getallowners');
     }
 
-    getOwnerById (ownerId) {
-        
-    return Api.get(`/owner/getownerbyid/${ownerId}`);
+    getOwnerById(ownerId) {
+
+        return Api.get(`/owner/getownerbyid/${ownerId}`);
     }
 
-    registerOwner (owner) {
+    registerOwner(owner) {
 
-    return Api.post('/owner/register', owner);
+        return Api.post('/owner/register', owner);
     }
 
-    updateOwner (ownerId, owner) {
+    updateOwner(ownerId, owner) {
 
-    return Api.put(`/owner/updateownerdetails/${ownerId}`, owner);
+        return Api.put(`/owner/updateownerdetails/${ownerId}`, owner);
     }
 
-    deleteOwner (ownerId) {
+    deleteOwner(ownerId) {
 
-    return Api.delete(`/owner/deletemyaccount/${ownerId}`);
+        return Api.delete(`/owner/deletemyaccount/${ownerId}`);
     }
 
 };
