@@ -8,8 +8,12 @@ import SignUp from './pages/customer/RegisterCustomer'
 import CustomerDetails from './pages/customer/CustomerDetails'
 import UpdateCustomerDetails from './pages/customer/UpdateCustomerDetails'
 import SignUpOwner from './pages/owner/RegisterOwner'
+import OwnerDetails from './pages/admin/OwnerDetails'
+import UpdateOwnerDetails from './pages/owner/UpdateOwnerDetails'
 import RegisterGarage from './pages/owner/RegisterGarage'
 import RegisterAdmin from './pages/admin/RegisterAdmin'
+import TimeSlot from './pages/owner/AddTimeSlot'
+import UpdateTimeSlotDetails from './pages/owner/UpdateTimeSlotDetails'
 // import NotFound from './pages/NotFound'
 
 function App() {
@@ -26,9 +30,13 @@ function App() {
           <Route path='/signup' element={<SignUp />} />
           <Route path='/signupowner' element={<SignUpOwner />} />
           <Route path='/allcustomers' element={<CustomerDetails />} />
+          <Route path='/allowners' element={<OwnerDetails />} />
           <Route path='/registergarage' element={<RegisterGarage />} />
           <Route path='/registeradmin' element={<RegisterAdmin />} />
           <Route path='/updatecustomerdetails' element={<UpdateCustomerDetails />} />
+          <Route path='/updateownerdetails' element={<UpdateOwnerDetails />} />
+          <Route path='/addtimeslot/:garageId' element={<TimeSlot />} />
+          <Route path='/updatetimeslot/:timeSlotId' element={<UpdateTimeSlotDetails />} />
           {/* <Route path='*' element={<NotFound />} /> */}
         </Routes>
       </BrowserRouter>
