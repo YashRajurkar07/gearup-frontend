@@ -15,31 +15,27 @@ const SignIn = () => {
         setCredentials({ ...credentials, [name]: value });
     }
 
-    // --- THIS IS THE UPDATED FUNCTION ---
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             // 1. Call Backend
             const response = await axios.post("http://localhost:8080/auth/signin", credentials);
 
-            console.log("Backend Response:", response.data); // Debugging line
+            console.log("Backend Response:", response.data);
 
-            // 2. CRITICAL FIX: Extract 'token' and 'role' manually
-            // Use 'token' if your backend sends 'token', or 'jwt' if it sends 'jwt'
             const { token, role } = response.data;
 
             // 3. Force Save to LocalStorage (Bypassing potential bugs in doLogin)
             if (token) {
                 localStorage.setItem("jwtToken", token);
                 localStorage.setItem("userRole", role);
-                // Also save the whole object for AuthHandler if needed
                 localStorage.setItem("userDetails", JSON.stringify(response.data));
+
             } else {
                 alert("Login successful but no token received!");
                 return;
             }
 
-            // 4. Dynamic Redirect
             if (role === 'ROLE_ADMIN') {
                 navigate('/admin/dashboard');
             } else if (role === 'ROLE_OWNER') {

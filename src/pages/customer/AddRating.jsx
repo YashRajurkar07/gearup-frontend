@@ -3,7 +3,6 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { Star } from "lucide-react";
 import RatingService from "../../apis/RatingService";
 
-// This is a component you can use inside CustomerDashboard
 const RateExperience = ({ show, handleClose, appointmentId, garageId, onRatingSuccess }) => {
     const [ratingValue, setRatingValue] = useState(5);
     const [comment, setComment] = useState("");
@@ -19,7 +18,7 @@ const RateExperience = ({ show, handleClose, appointmentId, garageId, onRatingSu
         try {
             await RatingService.addRating(ratingPayload);
             alert("Thank you for your feedback!");
-            onRatingSuccess(); // Refresh the list in dashboard
+            onRatingSuccess();
             handleClose();
         } catch (error) {
             console.error("Error submitting rating:", error);

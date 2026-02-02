@@ -1,15 +1,16 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { isLoggedIn, getUserRole } from '../store/AuthHandler'; // Ensure path is correct
+import { isLoggedIn, getUserRole } from '../store/AuthHandler';
 
 const PrivateRoute = ({ allowedRoles }) => {
     
-    // 1. Check Login Status
+    // Check Login Status
     if (!isLoggedIn()) {
         return <Navigate to="/signin" replace />;
     }
 
-    // 2. Check Role (if specific roles are required)
+    // Check Role
     const userRole = getUserRole();
+
     if (allowedRoles && !allowedRoles.includes(userRole)) {
         // User is logged in but authorized for this page
         // Redirect them to their appropriate home
@@ -18,7 +19,7 @@ const PrivateRoute = ({ allowedRoles }) => {
         return <Navigate to="/home" replace />;
     }
 
-    // 3. Authorized? Render the page (Outlet)
+    // If Authorized, Render the page (Outlet)
     return <Outlet />;
 };
 

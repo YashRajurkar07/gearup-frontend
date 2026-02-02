@@ -13,10 +13,10 @@ class AdminService {
     }
 
     registerAdmin(admin) {
-        
+
         const token = localStorage.getItem("jwtToken");
 
-       
+
         return Api.post('/auth/signup', admin, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -37,6 +37,37 @@ class AdminService {
     verifyOwner(ownerId, status) {
 
         return Api.put(`/admin/verifyowner/${ownerId}?status=${status}`);
+    }
+
+    getOwnerById(ownerId) {
+
+        return Api.get(`/admin/getownerbyid/${ownerId}`);
+    }
+
+    updateOwner(ownerId, owner) {
+
+        return Api.put(`/admin/updateownerdetails/${ownerId}`, owner);
+    }
+
+    deleteOwner(ownerId) {
+
+        return Api.delete(`/admin/deleteowner/${ownerId}`);
+    }
+
+    getCustomerById(customerId) {
+
+        return Api.get(`/admin/getcustomerbyid/${customerId}`);
+
+    }
+
+    updateCustomer(customerId, customer) {
+
+        return Api.put(`/admin/updatecustomerdetails/${customerId}`, customer);
+    }
+
+    deleteCustomer(customerId) {
+
+        return Api.delete(`/admin/deletecustomer/${customerId}`);
     }
 
 };

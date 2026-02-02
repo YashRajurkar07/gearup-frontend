@@ -6,7 +6,6 @@ import Footer from "../../components/Footer";
 import GarageService from "../../apis/GarageService";
 import TimeSlotService from "../../apis/TimeSlotService";
 import AppointmentService from "../../apis/AppointmentService";
-import { getUserId } from "../../store/AuthHandler";
 
 const BookAppointment = () => {
     const { garageId } = useParams();
@@ -20,16 +19,13 @@ const BookAppointment = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                // 1. Fetch Garage Details
                 const garageRes = await GarageService.getGarageById(garageId);
                 setGarage(garageRes.data);
 
-                // 2. Fetch Available Slots
                 const slotsRes = await TimeSlotService.getAvailableTimeSlots(garageId);
                 setSlots(slotsRes.data);
             } catch (error) {
-                console.error("Error loading data:", error);
-                alert("Failed to load garage details.");
+                alert("Failed to load garage details."); // Optional: suppress alert on load
             } finally {
                 setLoading(false);
             }
@@ -38,31 +34,50 @@ const BookAppointment = () => {
     }, [garageId]);
 
     const handleBooking = async () => {
-        if (!selectedSlot) return;
 
-        const customerId = getUserId();
-        if (!customerId) {
-            alert("Please login to book an appointment.");
+        const userDetailsString = localStorage.getItem("userDetails");
+        if (!userDetailsString) {
+            alert("Please Log In to book an appointment.");
             navigate("/signin");
             return;
         }
+        
+        const userDetails = JSON.parse(userDetailsString);
+        const customerId = userDetails.id; 
 
-        const appointmentPayload = {
-            customer: { id: customerId }, // Depending on your Backend DTO structure
-            garage: { id: garageId },
-            timeslot: { id: selectedSlot.id },
-            appointmentDate: new Date().toISOString().split('T')[0], // Today's date for simplicity, or add a DatePicker
-            status: "PENDING"
+        if (!selectedSlot) {
+            alert("Please select a time slot first.");
+            return;
+        }
+
+        const appointmentDate = selectedSlot.startTime.split("T")[0];
+
+        const payload = {
+            appointmentDate: appointmentDate,
+            customerId: customerId,
+            timeSlotId: selectedSlot.id,
+            paymentMode: "CASH"
         };
 
         try {
-            await AppointmentService.scheduleAppointment(appointmentPayload);
+            await AppointmentService.scheduleAppointment(payload);
             alert("Appointment Booked Successfully!");
             navigate("/customer/dashboard");
         } catch (error) {
             console.error("Booking failed:", error);
-            alert("Booking Failed. Please try again.");
+            alert("Booking Failed: " + (error.response?.data?.message || "Server Error"));
         }
+    };
+
+    // Helper to format time (e.g. "2026-02-02T09:30:00" -> "09:30 AM")
+    const formatTime = (dateTimeString) => {
+        const date = new Date(dateTimeString);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    // Helper to format date for the header
+    const formatDate = (dateTimeString) => {
+        return new Date(dateTimeString).toLocaleDateString();
     };
 
     if (loading) return <div className="text-center mt-5 text-light">Loading...</div>;
@@ -85,9 +100,10 @@ const BookAppointment = () => {
                                 </Card.Body>
                             </Card>
 
-                            {/* Slot Selection */}
                             <Card className="bg-dark text-light border-secondary">
-                                <Card.Header className="border-secondary">Select a Time Slot</Card.Header>
+                                <Card.Header className="border-secondary text-warning">
+                                    Select a Time Slot
+                                </Card.Header>
                                 <Card.Body>
                                     {slots.length > 0 ? (
                                         <div className="d-flex flex-wrap gap-3">
@@ -96,20 +112,26 @@ const BookAppointment = () => {
                                                     key={slot.id}
                                                     variant={selectedSlot?.id === slot.id ? "warning" : "outline-light"}
                                                     onClick={() => setSelectedSlot(slot)}
+                                                    className="p-3"
                                                 >
-                                                    {slot.startTime} - {slot.endTime}
+                                                    <div className="fw-bold">{formatDate(slot.startTime)}</div>
+                                                    <div>
+                                                        {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
+                                                    </div>
                                                 </Button>
                                             ))}
                                         </div>
                                     ) : (
-                                        <Alert variant="info">No available slots for this garage.</Alert>
+                                        <Alert variant="info" className="bg-dark text-info border-info">
+                                            No available slots found for this garage.
+                                        </Alert>
                                     )}
 
                                     <div className="mt-4 border-top border-secondary pt-3">
                                         <Button
                                             variant="success"
                                             size="lg"
-                                            className="w-100"
+                                            className="w-100 fw-bold"
                                             disabled={!selectedSlot}
                                             onClick={handleBooking}
                                         >

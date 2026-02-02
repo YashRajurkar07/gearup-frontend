@@ -1,63 +1,112 @@
 import { useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TimeSlotService from "../../apis/TimeSlotService";
-import Navbar from "../../components/Navbar";
+import AppNavbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
 const TimeSlot = () => {
-
     const { garageId } = useParams();
+    const navigate = useNavigate();
 
-    const [timeSlotDetails, setTimeSlotDetails] = useState({
+    const [slotData, setSlotData] = useState({
+        date: "",
         startTime: "",
-        endTime: "",
-        isBooked: false,
-        garageId: garageId
+        endTime: ""
     });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setTimeSlotDetails({ ...timeSlotDetails, [name]: value });
-    }
+        setSlotData({ ...slotData, [name]: value });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const res = await TimeSlotService.addTimeSlot(timeSlotDetails);
 
-            alert(res.data.message);
-            Navigate('/owner/garagedetails/');
-            
-        }catch (error){
-            alert("Error Adding Time Slot:", error);
+        if (!slotData.date || !slotData.startTime || !slotData.endTime) {
+            alert("Please select Date, Start Time, and End Time.");
+            return;
         }
-    }
+
+        const formattedPayload = {
+            garageId: garageId,
+            startTime: `${slotData.date}T${slotData.startTime}:00`,
+            endTime: `${slotData.date}T${slotData.endTime}:00`,
+            isBooked: false
+        };
+
+        try {
+
+            const res = await TimeSlotService.addTimeSlot(formattedPayload);
+            alert(res.data.message || "Time Slot Added Successfully!");
+            
+            navigate('/owner/dashboard');
+            
+        } catch (error) {
+            console.error("Error Adding Time Slot:", error);
+            alert("Failed to add slot. Check console for details.");
+        }
+    };
 
     return (
         <>
-            <Navbar />
+            <AppNavbar />
 
-            <div className="container-fluid" style={{ backgroundColor: "#070c16", minHeight: "60vh" }}>
+            <div className="container-fluid" style={{ backgroundColor: "#070c16", minHeight: "80vh", padding: "40px 0" }}>
                 <div className="container">
                     <div className="row justify-content-center">
-                        <div className="col-md-8 col-lg-6 bg-dark text-light my-5 p-4 pt-3 rounded">
+                        <div className="col-md-8 col-lg-6 bg-dark text-light p-5 rounded border border-secondary shadow">
 
                             <form onSubmit={handleSubmit}>
-                                <h2 className="mb-4 text-center">Add New Time Slot To Garage</h2>
+                                <h2 className="mb-4 text-center text-warning">Add New Time Slot</h2>
+
+                                <div className="mb-4">
+                                    <label className="form-label fw-bold">Select Date :</label>
+                                    <input 
+                                        type="date" 
+                                        className="form-control" 
+                                        name="date" 
+                                        value={slotData.date} 
+                                        onChange={handleInputChange} 
+                                        required
+                                    />
+                                </div>
 
                                 <div className="row mb-4">
                                     <div className="col-md-6">
-                                        <label className="form-label">Start Time :</label>
-                                        <input type="time" className="form-control" name="startTime" value={timeSlotDetails.startTime} onChange={handleInputChange} />
+                                        <label className="form-label fw-bold">Start Time :</label>
+                                        <input 
+                                            type="time" 
+                                            className="form-control" 
+                                            name="startTime" 
+                                            value={slotData.startTime} 
+                                            onChange={handleInputChange} 
+                                            required
+                                        />
                                     </div>
                                     <div className="col-md-6">
-                                        <label className="form-label">End Time :</label>
-                                        <input type="time" className="form-control" name="endTime" value={timeSlotDetails.endTime} onChange={handleInputChange} />
+                                        <label className="form-label fw-bold">End Time :</label>
+                                        <input 
+                                            type="time" 
+                                            className="form-control" 
+                                            name="endTime" 
+                                            value={slotData.endTime} 
+                                            onChange={handleInputChange} 
+                                            required
+                                        />
                                     </div>
                                 </div>
 
-                                <div className="text-center">
-                                    <button type="submit" className="btn btn-success btn-lg mt-3">Submit Data</button>
+                                <div className="text-center d-grid gap-2">
+                                    <button type="submit" className="btn btn-warning btn-lg fw-bold text-dark">
+                                        Confirm & Add Slot
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-outline-light mt-2"
+                                        onClick={() => navigate('/owner/dashboard')}
+                                    >
+                                        Cancel
+                                    </button>
                                 </div>
 
                             </form>
@@ -69,7 +118,6 @@ const TimeSlot = () => {
 
             <Footer />
         </>
-
     );
 };
 

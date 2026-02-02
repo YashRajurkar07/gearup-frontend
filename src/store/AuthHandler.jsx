@@ -7,12 +7,11 @@ export const isLoggedIn = () => {
 export const doLogin = (data, next) => {
     localStorage.setItem("jwtToken", data.jwt);
     
-    // Save the critical User Details as a JSON string
     const userDetails = {
         id: data.id,
         email: data.email,
         role: data.role,
-        name: data.name // if your backend returns this
+        name: data.name 
     };
     localStorage.setItem("userDetails", JSON.stringify(userDetails));
 
@@ -32,7 +31,7 @@ export const getCurrentUser = () => {
     if (isLoggedIn()) {
         return JSON.parse(localStorage.getItem("userDetails"));
     } else {
-        return null; // or undefined
+        return null;
     }
 };
 

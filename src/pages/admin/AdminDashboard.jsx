@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Table, Button, Spinner, Badge } from "react-bootstrap";
-import { Users, Briefcase, Wrench, CheckCircle, XCircle, UserPlus } from "lucide-react"; // Added UserPlus icon
-import { useNavigate } from "react-router-dom"; // Import hook for navigation
+import { Users, Briefcase, Wrench, CheckCircle, XCircle, UserPlus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import AppNavbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import OwnerService from "../../apis/OwnerService";
@@ -10,7 +10,7 @@ import GarageService from "../../apis/GarageService";
 import AdminService from "../../apis/AdminService";
 
 const AdminDashboard = () => {
-    const navigate = useNavigate(); // Hook to navigate
+    const navigate = useNavigate();
 
     const [stats, setStats] = useState({
         customers: 0,
@@ -24,7 +24,7 @@ const AdminDashboard = () => {
     const loadDashboardData = async () => {
         setLoading(true);
         try {
-            // 1. Fetch all data in parallel
+            
             const [customersRes, ownersRes, garagesRes] = await Promise.all([
                 CustomerService.getAllCustomers(),
                 OwnerService.getAllOwners(),
@@ -33,7 +33,7 @@ const AdminDashboard = () => {
 
             const owners = ownersRes.data || [];
             
-            // 2. Filter Pending Owners (Not Verified)
+          
             const pending = owners.filter(o => !o.isVerified);
 
             setPendingOwners(pending);
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
             <AppNavbar />
             <div style={{ backgroundColor: "#0f172a", minHeight: "100vh", padding: "40px 0" }}>
                 <Container>
-                    {/* --- HEADER WITH BUTTON --- */}
+
                     <div className="d-flex justify-content-between align-items-center mb-4">
                         <h2 className="text-light mb-0">Admin Dashboard</h2>
                         <Button 
@@ -85,7 +85,6 @@ const AdminDashboard = () => {
                         </Button>
                     </div>
 
-                    {/* --- STATS CARDS --- */}
                     <Row className="g-4 mb-5">
                         <Col md={3}>
                             <Card className="bg-dark text-light border-primary h-100">
@@ -133,7 +132,6 @@ const AdminDashboard = () => {
                         </Col>
                     </Row>
 
-                    {/* --- PENDING APPROVALS TABLE --- */}
                     <Card className="bg-dark text-light border-secondary">
                         <Card.Header className="border-secondary d-flex justify-content-between align-items-center">
                             <h5 className="mb-0">Pending Owner Verifications</h5>

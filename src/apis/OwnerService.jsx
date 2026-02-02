@@ -4,7 +4,7 @@ class OwnerService {
 
     getAllOwners() {
 
-        return Api.get('/owner/getallowners');
+        return Api.get('/admin/getallowners');
     }
 
     getOwnerById(ownerId) {

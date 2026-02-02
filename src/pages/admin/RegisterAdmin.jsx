@@ -7,7 +7,6 @@ import AdminService from "../../apis/AdminService";
 const RegisterAdmin = () => {
     const navigate = useNavigate();
 
-    // 1. FLATTENED STATE (Matches SignupRequest.java)
     const [adminDetails, setAdminDetails] = useState({
         firstName: '',
         lastName: '',
@@ -16,16 +15,15 @@ const RegisterAdmin = () => {
         confirmPassword: '',
         mobileNumber: '',
         dateOfBirth: '',
-        gender: 'MALE', // Default
+        gender: 'MALE', 
 
-        // Address fields directly at root
         city: '',
         state: '',
         country: '',
         area: '',
         zipCode: '',
 
-        role: 'ROLE_ADMIN' // <--- CRITICAL: Defines the user type
+        role: 'ROLE_ADMIN'
     });
 
     const handleInputChange = (e) => {
@@ -43,7 +41,6 @@ const RegisterAdmin = () => {
         }
 
         try {
-            // Sends the flat object directly
             const res = await AdminService.registerAdmin(adminDetails);
             alert(res.data.message || "Admin Registered Successfully!");
             navigate('/signin');
@@ -113,7 +110,6 @@ const RegisterAdmin = () => {
                                     </div>
                                 </div>
 
-                                {/* --- ADDRESS DETAILS (FLAT) --- */}
                                 <div className="row mb-3">
                                     <div className="col-md-4">
                                         <label className="form-label">Area :</label>

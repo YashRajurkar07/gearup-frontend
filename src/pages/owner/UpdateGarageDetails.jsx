@@ -26,7 +26,7 @@ const UpdateGarageDetails = () => {
     const loadData = async () => {
 
         try {
-            const response = await GarageService.getGarageById(garageId);
+            const response = await GarageService.getGarageByIdOwner(garageId);
             const prevData = response.data;
             setGarageDetails(g => ({ ...g, ...prevData, address: { ...g.address, ...prevData.address } }));
         } catch (error) {
@@ -67,7 +67,7 @@ const UpdateGarageDetails = () => {
                         <div className="col-md-8 col-lg-6 bg-dark text-light my-1 p-4 pt-3 rounded">
 
                             <form onSubmit={handleSubmit}>
-                                <h2 className="mb-4 text-center">Add New Garage</h2>
+                                <h2 className="mb-4 text-center">Update Garage Details</h2>
 
                                 <div className="row mb-3">
                                     <div className="col-md-6">
@@ -118,11 +118,11 @@ const UpdateGarageDetails = () => {
                                 <div className="row mb-4">
                                     <div className="col-md-6">
                                         <label className="form-label">State :</label>
-                                        <input type="text" className="form-control" name="state" value={garageDetails.state} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="state" value={garageDetails.address.state} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label">Country :</label>
-                                        <input type="text" className="form-control" name="country" value={garageDetails.country} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="country" value={garageDetails.address.country} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 

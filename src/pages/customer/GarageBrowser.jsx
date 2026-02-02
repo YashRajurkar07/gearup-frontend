@@ -12,7 +12,6 @@ const GarageBrowser = () => {
     const [garages, setGarages] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Load all garages initially
     useEffect(() => {
         loadGarages();
     }, []);
@@ -33,18 +32,14 @@ const GarageBrowser = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            // If search is empty, reload all. Otherwise search by city/area
             if (!searchTerm.trim()) {
                 loadGarages();
             } else {
-                // Assuming you have a search method or filter locally
-                // Ideally: GarageService.getGarageByArea(searchTerm)
-                const res = await GarageService.getGarageByArea(searchTerm); 
+                const res = await GarageService.getGarageByArea(searchTerm);
                 setGarages(res.data);
             }
         } catch (error) {
             console.error("Search failed:", error);
-            // Fallback: Filter locally if API fails
             // setGarages(prev => prev.filter(g => g.city.includes(searchTerm))); 
         } finally {
             setLoading(false);
@@ -58,8 +53,8 @@ const GarageBrowser = () => {
                 <Container>
                     <div className="text-center text-light mb-5">
                         <h1 className="fw-bold">Find a <span className="text-warning">Garage</span> Near You</h1>
-                        <p className="text-secondary">Search by City, Area, or Zip Code</p>
-                        
+                        <p className="text-secondary">Search by City or Area</p>
+
                         <Row className="justify-content-center mt-4">
                             <Col md={6}>
                                 <Form onSubmit={handleSearch}>
@@ -79,7 +74,6 @@ const GarageBrowser = () => {
                         </Row>
                     </div>
 
-                    {/* Results Grid */}
                     {loading ? (
                         <div className="text-center text-light"><Spinner animation="border" /></div>
                     ) : (
@@ -92,7 +86,7 @@ const GarageBrowser = () => {
                                             <div style={{ height: "150px", backgroundColor: "#334155", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                 <span className="text-secondary">Garage Image</span>
                                             </div>
-                                            
+
                                             <Card.Body>
                                                 <Card.Title className="fw-bold text-warning">{garage.garageName}</Card.Title>
                                                 <div className="d-flex align-items-center gap-2 text-secondary mb-2">
@@ -104,9 +98,9 @@ const GarageBrowser = () => {
                                                     <small>{garage.openingTime} - {garage.closingTime}</small>
                                                 </div>
                                                 <div className="d-grid">
-                                                    <Button 
-                                                        variant="outline-light" 
-                                                        onClick={() => navigate(`/book-appointment/${garage.id}`)}
+                                                    <Button
+                                                        variant="outline-light"
+                                                        onClick={() => navigate(`/bookappointment/${garage.id}`)}
                                                     >
                                                         Book Appointment
                                                     </Button>

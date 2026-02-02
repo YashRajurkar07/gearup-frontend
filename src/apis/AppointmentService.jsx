@@ -47,6 +47,11 @@ class AppointmentService {
         return Api.put(`/appointment/updateappointment/${appointmentId}`, appointment);
     }
 
+    updateAppointmentStatus(appointmentId, statusPayload) {
+
+        return Api.put(`/appointment/updatestatus/${appointmentId}`, statusPayload);
+    }
+
     cancelAppointment(appointmentId) {
 
         return Api.delete(`/appointment/cancelappointment/${appointmentId}`);

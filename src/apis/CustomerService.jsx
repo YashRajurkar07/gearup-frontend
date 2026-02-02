@@ -4,7 +4,7 @@ class CustomerService {
 
   getAllCustomers() {
 
-    return Api.get('/customer/getallcustomers');
+    return Api.get('/admin/getallcustomers');
   }
 
   getCustomerById(customerId) {

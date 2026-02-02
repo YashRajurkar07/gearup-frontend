@@ -9,7 +9,12 @@ class GarageService {
 
     getGarageById(garageId) {
 
-        return Api.get(`/garage/garagebyid/${garageId}`);
+        return Api.get(`/customer/garagebyid/${garageId}`);
+    }
+
+    getGarageByIdOwner(garageId) {
+
+        return Api.get(`/owner/garagebyid/${garageId}`);
     }
 
     getGarageByOwnerId(ownerId) {

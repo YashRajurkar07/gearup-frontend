@@ -2,8 +2,11 @@ import AppNavbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Button, Container, Row, Col, Card } from 'react-bootstrap';
 import { CalendarCheck, ShieldCheck, Star } from 'lucide-react';
+import { isLoggedIn } from '../store/AuthHandler';
 
 const HomePage = () => {
+
+  const loggedIn = isLoggedIn();
   return (
     <div className="d-flex flex-column min-vh-100">
       <AppNavbar />
@@ -29,7 +32,7 @@ const HomePage = () => {
 
           <Container
             className="position-relative text-center d-flex flex-column justify-content-center pt-5"
-            style={{color: '#e5e7eb' }}
+            style={{ color: '#e5e7eb' }}
           >
             <h1 className="fw-bold display-5">
               Book Your Appointments{' '}
@@ -38,9 +41,14 @@ const HomePage = () => {
             <p className="lead text-secondary mt-3 fw-semibold">
               Real-Time Slots · Verified Garages · Secure Payments
             </p>
-            <Button href="/signup" size="lg" variant="warning" className="mt-4 mb-5 align-self-center">
-              Get Started
-            </Button>
+
+            {!loggedIn && (
+              <Button href="/signup" size="lg" variant="warning" className="mt-4 mb-5 align-self-center">
+                Get Started
+              </Button>
+            )}
+
+
           </Container>
 
 

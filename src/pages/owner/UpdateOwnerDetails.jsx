@@ -3,10 +3,13 @@ import { Navigate, useParams } from "react-router-dom";
 import Navbar from '../../components/Navbar';
 import Footer from "../../components/Footer";
 import OwnerService from "../../apis/OwnerService";
+import AdminService from "../../apis/AdminService";
+import { getUserRole, getUserId } from "../../store/AuthHandler";
 
 const UpdateOwnerDetails = () => {
 
-    const { ownerId } = useParams();
+    const role = getUserRole();
+
 
     const [ownerDetails, setOwnerDetails] = useState({
         userDetails: {
@@ -34,7 +37,15 @@ const UpdateOwnerDetails = () => {
     const loadData = async () => {
 
         try {
+
+            const ownerId = getUserId();
+
+            if(!ownerId) {
+                return;
+            }
+
             const response = await OwnerService.getOwnerById(ownerId);
+
             const prevData = response.data;
             setOwnerDetails(o => ({ ...o, ...prevData, userDetails: { ...o.userDetails, ...prevData.userDetails, address: { ...o.userDetails.address, ...prevData.userDetails.address } } }));
         } catch (error) {
@@ -70,7 +81,7 @@ const UpdateOwnerDetails = () => {
 
     return (
         <>
-            <AppNavbar />
+            <Navbar />
             <div className="container-fluid" style={{ backgroundColor: "#070c16" }}>
                 <div className="container">
                     <div className="row justify-content-center">
