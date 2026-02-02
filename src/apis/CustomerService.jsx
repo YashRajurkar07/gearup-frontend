@@ -13,7 +13,7 @@ class CustomerService {
 
   registerCustomer(customer) {
 
-    return Api.post('/customer/register', customer);
+    return Api.post('/auth/signup', customer);
   }
 
   updateCustomer(customerId, customer) {

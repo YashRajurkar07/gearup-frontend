@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from '../../components/Navbar';
 import Footer from "../../components/Footer";
 import CustomerService from "../../apis/CustomerService";
+import { getUserId } from "../../store/AuthHandler";
+
 
 const UpdateCustomerDetails = () => {
+
+    const Navigate = useNavigate();
 
     const [customerDetails, setCustomerDetails] = useState({
         userDetails: {
@@ -30,8 +34,12 @@ const UpdateCustomerDetails = () => {
     const loadData = async () => {
 
         try {
-            const response = await CustomerService.getCustomerById(101);
-            const prevData = response.data.find(c => c.userDetails.id === parseInt(101));
+            const myId = getUserId();
+            if(!myId) {
+                return;
+            }
+            const response = await CustomerService.getCustomerById(myId);
+            const prevData = response.data.find(c => c.userDetails.id === parseInt(myId));
             // setCustomerDetails(c=> ({ ...c, ...prevData }));
 
             setCustomerDetails(c => ({ ...c, userDetails: { ...c.userDetails, ...prevData.userDetails, address: { ...c.userDetails.address, ...prevData.userDetails.address } }, licenseNumber: prevData.licenseNumber }));

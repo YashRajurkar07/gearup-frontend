@@ -1,40 +1,67 @@
-import { useState} from 'react';
-import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
-import { Navigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import AppNavbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { doLogin } from '../store/AuthHandler';
+import axios from 'axios';
 
 const SignIn = () => {
-
-    const [userDetails, setUserDetails] = useState({ email: '', password: '' });
-
+    const navigate = useNavigate();
+    const [credentials, setCredentials] = useState({ email: '', password: '' });
 
     const handleUserInput = (e) => {
         const { name, value } = e.target;
-        setUserDetails({ ...userDetails, [name]: value });
+        setCredentials({ ...credentials, [name]: value });
     }
 
-    const handleSubmit = (e) => {
+    // --- THIS IS THE UPDATED FUNCTION ---
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            
-            
+            // 1. Call Backend
+            const response = await axios.post("http://localhost:8080/auth/signin", credentials);
 
-            Navigate('/home');
+            console.log("Backend Response:", response.data); // Debugging line
+
+            // 2. CRITICAL FIX: Extract 'token' and 'role' manually
+            // Use 'token' if your backend sends 'token', or 'jwt' if it sends 'jwt'
+            const { token, role } = response.data;
+
+            // 3. Force Save to LocalStorage (Bypassing potential bugs in doLogin)
+            if (token) {
+                localStorage.setItem("jwtToken", token);
+                localStorage.setItem("userRole", role);
+                // Also save the whole object for AuthHandler if needed
+                localStorage.setItem("userDetails", JSON.stringify(response.data));
+            } else {
+                alert("Login successful but no token received!");
+                return;
+            }
+
+            // 4. Dynamic Redirect
+            if (role === 'ROLE_ADMIN') {
+                navigate('/admin/dashboard');
+            } else if (role === 'ROLE_OWNER') {
+                navigate('/owner/dashboard');
+            } else {
+                navigate('/customer/dashboard');
+            }
+
         } catch (error) {
-            alert("Error Signing In" + error);
+            console.error(error);
+            alert("Invalid Credentials or Server Error");
         }
     }
 
     return (
         <>
-            <div style={{ backgroundColor: "#070c16" }}>
+            <div style={{ backgroundColor: "#070c16", minHeight: "50vh" }}>
                 <AppNavbar />
-                <Container className="my-5">
+                <Container className="my-4">
                     <Row className="justify-content-center text-light">
                         <Col md={6}>
                             <h1>Sign In to Your <span style={{ color: '#f97316' }}>Account</span></h1>
-
                             <Form onSubmit={handleSubmit}>
                                 <Form.Group className="mb-3 mt-4" controlId="formBasicEmail">
                                     <Form.Label>Email Address</Form.Label>
@@ -42,7 +69,7 @@ const SignIn = () => {
                                         type="email"
                                         placeholder="Enter Email"
                                         name="email"
-                                        value={userDetails.email}
+                                        value={credentials.email}
                                         onChange={handleUserInput}
                                     />
                                 </Form.Group>
@@ -53,7 +80,7 @@ const SignIn = () => {
                                         type="password"
                                         placeholder="Password"
                                         name="password"
-                                        value={userDetails.password}
+                                        value={credentials.password}
                                         onChange={handleUserInput}
                                     />
                                 </Form.Group>
@@ -67,13 +94,10 @@ const SignIn = () => {
                                 </span>
                             </p>
                         </Col>
-
                     </Row>
-                </Container >
+                </Container>
             </div>
-
             <Footer />
-
         </>
     );
 }

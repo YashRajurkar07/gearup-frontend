@@ -14,7 +14,7 @@ class OwnerService {
 
     registerOwner(owner) {
 
-        return Api.post('/owner/register', owner);
+        return Api.post('/auth/signup', owner);
     }
 
     updateOwner(ownerId, owner) {

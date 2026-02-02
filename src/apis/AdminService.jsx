@@ -13,8 +13,15 @@ class AdminService {
     }
 
     registerAdmin(admin) {
+        
+        const token = localStorage.getItem("jwtToken");
 
-        return Api.post('/admin/register', admin);
+       
+        return Api.post('/auth/signup', admin, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
     }
 
     updateAdmin(adminId, admin) {

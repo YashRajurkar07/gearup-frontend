@@ -29,7 +29,7 @@ class AppointmentService {
 
     getHistoryAppointments(userId) {
 
-        return Api.get(`/appointment/gethistoryappointments/${userId}`);
+        return Api.get(`/appointment/getappointmentshistory/${userId}`);
     }
 
     scheduleAppointment(appointment) {

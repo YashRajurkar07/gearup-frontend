@@ -9,17 +9,17 @@ class GarageService {
 
     getGarageById(garageId) {
 
-        return Api.get(`/garage/getgaragebyid/${garageId}`);
+        return Api.get(`/garage/garagebyid/${garageId}`);
     }
 
     getGarageByOwnerId(ownerId) {
 
-        return Api.get(`/garage/getgaragebyowner/${ownerId}`);
+        return Api.get(`/garage/garagebyowner/${ownerId}`);
     }
 
     getGarageByArea(area) {
 
-        return Api.get('/garage/getgaragesbyarea/', area);
+        return Api.get('/garage/garagesbyarea/', area);
     }
 
     getGarageSearchResults(searchParams) {
@@ -44,7 +44,7 @@ class GarageService {
 
     deleteGarage(garageId) {
 
-        return Api.delete(`/garage/delete/${garageId}`);
+        return Api.delete(`/garage/deletegarage/${garageId}`);
     }
 
     getGarageStatistics(garageId) {

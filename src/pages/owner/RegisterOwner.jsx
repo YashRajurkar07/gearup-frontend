@@ -1,56 +1,56 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import OwnerService from "../../apis/OwnerService";
 import AppNavbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
 const RegisterOwner = () => {
+  const navigate = useNavigate();
 
   const [ownerDetails, setOwnerDetails] = useState({
-    userDetails: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      mobileNumber: '',
-      dateOfBirth: '',
-      gender: '',
-      address: {
-        city: '',
-        state: '',
-        country: '',
-        area: '',
-        zipCode: ''
-      },
-    },
-    
-      alternatePhone: '',
-      registrationNumber: ''
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    mobileNumber: '',
+    dateOfBirth: '',
+    gender: 'MALE',
+
+    alternatePhone: '',
+    registrationNumber: '',
+
+    city: '',
+    state: '',
+    country: '',
+    area: '',
+    zipCode: '',
+
+    role: 'ROLE_OWNER'
   });
 
-  const handleSubmit =  async (e) => {
+  const handleDetailsInput = (e) => {
+    const { name, value } = e.target;
+    setOwnerDetails({ ...ownerDetails, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try { 
+
+    if (ownerDetails.password !== ownerDetails.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+
       const res = await OwnerService.registerOwner(ownerDetails);
       alert(res.data.message);
-      Navigate('/signin');
+      navigate('/signin');
+
     } catch (error) {
       console.error("Error Registering Owner:", error);
-    }
-  }
-
-  const handleDetailsInput = (e) => {
-
-    const { name, value } = e.target;
-    
-    if (['area', 'city', 'state', 'country', 'zipCode'].includes(name)) {
-      setOwnerDetails(o => ({ ...o, userDetails: { ...o.userDetails, address: { ...o.userDetails.address, [name]: value } } }));
-    }
-    else if (name === 'alternatePhone' || name === 'registrationNumber') {
-      setOwnerDetails(o => ({ ...o, [name]: value }));
-    } else{
-      setOwnerDetails(o => ({...o, userDetails: {...o.userDetails, [name]: value }}));
+      alert("Registration failed");
     }
   }
 
@@ -59,10 +59,7 @@ const RegisterOwner = () => {
       <AppNavbar />
       <div className="container-fluid" style={{ backgroundColor: "#070c16" }}>
         <div className="container">
-          <p className="d-flex align-items-center mt-3 text-light">
-            <span>Join With Us as A Customer? &nbsp; <a href="/signup"><button className="btn btn-outline-success" type="button">Register Here</button></a>
-            </span>
-          </p>
+          {/* ... (Existing HTML layout for form) ... */}
           <div className="row justify-content-center">
             <div className="col-md-8 col-lg-6 bg-dark text-light my-1 p-4 pt-3 rounded">
               <form onSubmit={handleSubmit}>
@@ -75,21 +72,33 @@ const RegisterOwner = () => {
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Last Name :</label>
-                    <input type="text" className="form-control" name="lastName" value={ownerDetails.lastName} onChange={handleDetailsInput} />
+                    <input type="text" className="form-control" name="lastName" value={ownerDetails.lastName} onChange={handleDetailsInput} required />
                   </div>
                 </div>
 
                 <div className="row mb-3">
                   <div className="col-md-6">
                     <label className="form-label">Email :</label>
-                    <input type="email" className="form-control" name="email" value={ownerDetails.email} onChange={handleDetailsInput} />
+                    <input type="email" className="form-control" name="email" value={ownerDetails.email} onChange={handleDetailsInput} required />
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Mobile Number :</label>
-                    <input type="text" className="form-control" name="mobileNumber" value={ownerDetails.mobileNumber} onChange={handleDetailsInput} />
+                    <input type="text" className="form-control" name="mobileNumber" value={ownerDetails.mobileNumber} onChange={handleDetailsInput} required />
                   </div>
                 </div>
 
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Password :</label>
+                    <input type="password" className="form-control" name="password" value={ownerDetails.password} onChange={handleDetailsInput} required />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Confirm Password :</label>
+                    <input type="password" className="form-control" name="confirmPassword" value={ownerDetails.confirmPassword} onChange={handleDetailsInput} required />
+                  </div>
+                </div>
+
+                {/* Specific Owner Fields */}
                 <div className="row mb-3">
                   <div className="col-md-6">
                     <label className="form-label">Alternate Phone :</label>
@@ -103,24 +112,12 @@ const RegisterOwner = () => {
 
                 <div className="row mb-3">
                   <div className="col-md-6">
-                    <label className="form-label">Password :</label>
-                    <input type="password" className="form-control" name="password" value={ownerDetails.password} onChange={handleDetailsInput} />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Confirm Password :</label>
-                    <input type="password" className="form-control" name="confirmPassword" value={ownerDetails.confirmPassword} onChange={handleDetailsInput} />
-                  </div>
-                </div>
-
-                <div className="row mb-3">
-                  <div className="col-md-6">
                     <label className="form-label">Date of Birth :</label>
                     <input type="date" className="form-control" name="dateOfBirth" value={ownerDetails.dateOfBirth} onChange={handleDetailsInput} />
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Gender :</label>
                     <select className="form-select" name="gender" value={ownerDetails.gender} onChange={handleDetailsInput}>
-                      <option value="">Select Gender</option>
                       <option value="MALE">Male</option>
                       <option value="FEMALE">Female</option>
                       <option value="OTHERS">Others</option>
@@ -135,22 +132,22 @@ const RegisterOwner = () => {
                   </div>
                   <div className="col-md-4">
                     <label className="form-label">City :</label>
-                    <input type="text" className="form-control" name="city" value={ownerDetails.city} onChange={handleDetailsInput} />
+                    <input type="text" className="form-control" name="city" value={ownerDetails.city} onChange={handleDetailsInput} required />
                   </div>
                   <div className="col-md-4">
                     <label className="form-label">Zip Code :</label>
-                    <input type="text" className="form-control" name="zipCode" value={ownerDetails.zipCode} onChange={handleDetailsInput} />
+                    <input type="number" className="form-control" name="zipCode" value={ownerDetails.zipCode} onChange={handleDetailsInput} required />
                   </div>
                 </div>
 
                 <div className="row mb-4">
                   <div className="col-md-6">
                     <label className="form-label">State :</label>
-                    <input type="text" className="form-control" name="state" value={ownerDetails.state} onChange={handleDetailsInput} />
+                    <input type="text" className="form-control" name="state" value={ownerDetails.state} onChange={handleDetailsInput} required />
                   </div>
                   <div className="col-md-6">
                     <label className="form-label">Country :</label>
-                    <input type="text" className="form-control" name="country" value={ownerDetails.country} onChange={handleDetailsInput} />
+                    <input type="text" className="form-control" name="country" value={ownerDetails.country} onChange={handleDetailsInput} required />
                   </div>
                 </div>
 
@@ -158,8 +155,6 @@ const RegisterOwner = () => {
                   <button type="submit" className="btn btn-success btn-lg mt-3">Register Now</button>
                 </div>
               </form>
-
-
             </div>
           </div>
         </div>

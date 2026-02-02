@@ -1,10 +1,13 @@
-import { useState} from "react";
-import { Navigate } from "react-router-dom";
+import { useState, useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 import AppNavbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import GarageService from "../../apis/GarageService";
+import { getUserId } from "../../store/AuthHandler";
 
 const RegisterGarage = () => {
+
+    const navigate = useNavigate();
 
     const [garageDetails, setGarageDetails] = useState({
         garageName: "",
@@ -16,11 +19,24 @@ const RegisterGarage = () => {
             country: "",
             zipCode: ""
         },
-        ownerId: "101",
+        ownerId: "",
         totalMechanics: 0,
         openingTime: "",
         closingTime: ""
     });
+
+    useEffect(() => {
+
+        const id = getUserId();
+
+        if (id) {
+
+            setGarageDetails(g => ({ ...g, ownerId: id }));
+        } else {
+            alert("Please Login First");
+            navigate('/signin');
+        }
+    }, [navigate]);
 
     const handleDetailsInput = (e) => {
 
@@ -38,7 +54,7 @@ const RegisterGarage = () => {
         try {
             const response = await GarageService.registerGarage(garageDetails);
             console.log(response.data.message);
-            Navigate("/owner/dashboard");
+            navigate("/owner/dashboard");
 
         } catch (error) {
             console.error("Error Registering Garage:", error);
