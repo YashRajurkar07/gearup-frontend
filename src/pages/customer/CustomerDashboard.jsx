@@ -79,6 +79,7 @@ const CustomerDashboard = () => {
                     <div className="d-flex justify-content-between align-items-center mb-4">
                         <h2 className="text-light">My Appointments</h2>
                         <Button variant="warning" onClick={() => navigate("/garages")}>Book New Service</Button>
+                        {/* <Button variant="warning" onClick={() => navigate("/updatecustomerdetails")}>Update Profile</Button> */}
                     </div>
 
                     {loading ? (

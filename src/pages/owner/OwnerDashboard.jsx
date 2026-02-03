@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Card, Row, Col, Button, Spinner, Table, Badge, Tab, Tabs } from "react-bootstrap";
+import { Container, Card, Row, Col, Button, Spinner, Table, Badge, Tab, Tabs, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import AppNavbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
@@ -9,33 +9,63 @@ import { getUserId } from "../../store/AuthHandler";
 
 const OwnerDashboard = () => {
     const navigate = useNavigate();
-    const [garage, setGarage] = useState(null);
+    
+    // State for managing multiple garages
+    const [garages, setGarages] = useState([]);
+    const [selectedGarage, setSelectedGarage] = useState(null);
+    
+    // State for the currently selected garage's data
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [apptLoading, setApptLoading] = useState(false);
 
-    const loadDashboardData = async () => {
+    // 1. Initial Load: Fetch All Garages for the Owner
+    const loadOwnerGarages = async () => {
         setLoading(true);
         const ownerId = getUserId();
         try {
             const garageRes = await GarageService.getGarageByOwnerId(ownerId);
+            const garageList = garageRes.data || [];
             
-            if (garageRes.data && garageRes.data.length > 0) {
-                const myGarage = garageRes.data[0];
-                setGarage(myGarage);
+            setGarages(garageList);
 
-                const apptRes = await AppointmentService.getGarageAppointments(myGarage.id);
-                setAppointments(apptRes.data || []);
+            // Automatically select the first garage if available
+            if (garageList.length > 0) {
+                handleGarageChange(garageList[0]);
             }
         } catch (error) {
-            console.error("Error loading dashboard:", error);
+            console.error("Error loading garages:", error);
         } finally {
             setLoading(false);
         }
     };
 
+    // 2. Fetch Appointments for a specific Garage
+    const fetchAppointments = async (garageId) => {
+        setApptLoading(true);
+        try {
+            const apptRes = await AppointmentService.getGarageAppointments(garageId);
+            setAppointments(apptRes.data || []);
+        } catch (error) {
+            console.error("Error loading appointments:", error);
+            setAppointments([]);
+        } finally {
+            setApptLoading(false);
+        }
+    };
+
+    // 3. Handle Garage Switch
+    const handleGarageChange = (garage) => {
+        setSelectedGarage(garage);
+        fetchAppointments(garage.id);
+    };
+
+    // Trigger initial load
     useEffect(() => {
-        loadDashboardData();
+        loadOwnerGarages();
     }, []);
+
+    // --- Action Handlers (Refreshes only the current garage's appointments) ---
 
     const handleAccept = async (appt) => {
         try {
@@ -49,7 +79,7 @@ const OwnerDashboard = () => {
              await AppointmentService.updateAppointmentStatus(appt.id, payload); 
              
             alert("Appointment Confirmed!");
-            loadDashboardData();
+            fetchAppointments(selectedGarage.id); // Refresh list
         } catch (error) {
             console.error("Error confirming:", error);
             alert("Failed to confirm. Ensure backend supports status updates.");
@@ -61,7 +91,7 @@ const OwnerDashboard = () => {
         try {
             await AppointmentService.markAppointmentAsCompleted(apptId);
             alert("Service Completed!");
-            loadDashboardData(); 
+            fetchAppointments(selectedGarage.id); // Refresh list
         } catch (error) {
             console.error("Error updating status:", error);
             alert("Failed to update status: " + (error.response?.data?.message || "Unknown error"));
@@ -73,7 +103,7 @@ const OwnerDashboard = () => {
         try {
             await AppointmentService.cancelAppointment(apptId);
             alert("Appointment Cancelled.");
-            loadDashboardData(); 
+            fetchAppointments(selectedGarage.id); // Refresh list
         } catch (error) {
             console.error("Error cancelling:", error);
             alert("Failed to cancel appointment.");
@@ -82,6 +112,7 @@ const OwnerDashboard = () => {
 
     const formatDate = (dateString) => new Date(dateString).toLocaleDateString();
     
+    // Filter appointments for the *Selected* Garage
     const activeAppointments = appointments.filter(a => a.status === 'PENDING' || a.status === 'CONFIRMED');
     const historyAppointments = appointments.filter(a => a.status === 'COMPLETED' || a.status === 'CANCELLED');
 
@@ -90,29 +121,50 @@ const OwnerDashboard = () => {
             <AppNavbar />
             <div style={{ backgroundColor: "#0f172a", minHeight: "80vh", padding: "40px 0" }}>
                 <Container>
-                    <h2 className="text-light mb-4">Owner Dashboard</h2>
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                        <h2 className="text-light">Owner Dashboard</h2>
+                        
+                        {/* --- GARAGE SWITCHER (Only visible if > 1 garage) --- */}
+                        {garages.length > 1 && (
+                            <div className="d-flex align-items-center gap-2">
+                                <label className="text-light fw-bold">Select Garage:</label>
+                                <Form.Select 
+                                    style={{ width: "250px", cursor: "pointer" }}
+                                    value={selectedGarage?.id || ""}
+                                    onChange={(e) => {
+                                        const g = garages.find(g => g.id === parseInt(e.target.value));
+                                        handleGarageChange(g);
+                                    }}
+                                >
+                                    {garages.map(g => (
+                                        <option key={g.id} value={g.id}>{g.garageName} ({g.address?.city})</option>
+                                    ))}
+                                </Form.Select>
+                            </div>
+                        )}
+                    </div>
 
                     {loading ? (
                         <div className="text-center text-light"><Spinner animation="border" /></div>
-                    ) : garage ? (
+                    ) : selectedGarage ? (
                         <>
-                            {/* --- GARAGE INFO CARD --- */}
+                            {/* --- GARAGE INFO CARD (Dynamic based on selectedGarage) --- */}
                             <Row className="mb-5">
                                 <Col md={12}>
                                     <Card className="bg-dark text-light border-secondary shadow">
                                         <Card.Body>
                                             <div className="d-flex justify-content-between align-items-start">
                                                 <div>
-                                                    <Card.Title className="display-6 text-warning">{garage.garageName}</Card.Title>
+                                                    <Card.Title className="display-6 text-warning">{selectedGarage.garageName}</Card.Title>
                                                     <Card.Text className="text-secondary">
-                                                        {garage.address?.area}, {garage.address?.city} | Phone: {garage.garagePhone}
+                                                        {selectedGarage.address?.area}, {selectedGarage.address?.city} | Phone: {selectedGarage.garagePhone}
                                                     </Card.Text>
                                                 </div>
                                                 <div className="d-flex gap-2">
-                                                    <Button variant="success" onClick={() => navigate(`/addtimeslot/${garage.id}`)}>
+                                                    <Button variant="success" onClick={() => navigate(`/addtimeslot/${selectedGarage.id}`)}>
                                                         Manage Slots
                                                     </Button>
-                                                    <Button variant="outline-light" onClick={() => navigate(`/updategaragedetails/${garage.id}`)}>
+                                                    <Button variant="outline-light" onClick={() => navigate(`/updategaragedetails/${selectedGarage.id}`)}>
                                                         Edit Details
                                                     </Button>
                                                 </div>
@@ -122,14 +174,14 @@ const OwnerDashboard = () => {
                                                 <Col sm={3}>
                                                     <div className="p-3 border border-secondary rounded text-center">
                                                         <h6 className="text-secondary">Total Mechanics</h6>
-                                                        <h3 className="text-info">{garage.totalMechanics}</h3>
+                                                        <h3 className="text-info">{selectedGarage.totalMechanics}</h3>
                                                     </div>
                                                 </Col>
                                                 <Col sm={3}>
                                                     <div className="p-3 border border-secondary rounded text-center">
                                                         <h6 className="text-secondary">Shop Status</h6>
-                                                        <h3 className={garage.isActive ? "text-success" : "text-danger"}>
-                                                            {garage.isActive ? "Open" : "Closed"}
+                                                        <h3 className={selectedGarage.isActive ? "text-success" : "text-danger"}>
+                                                            {selectedGarage.isActive ? "Open" : "Closed"}
                                                         </h3>
                                                     </div>
                                                 </Col>
@@ -137,7 +189,7 @@ const OwnerDashboard = () => {
                                                     <div className="p-3 border border-secondary rounded text-center">
                                                         <h6 className="text-secondary">Active Appts</h6>
                                                         <h3 className="text-warning">
-                                                            {activeAppointments.length}
+                                                            {apptLoading ? <Spinner size="sm" /> : activeAppointments.length}
                                                         </h3>
                                                     </div>
                                                 </Col>
@@ -149,8 +201,9 @@ const OwnerDashboard = () => {
 
                             {/* --- APPOINTMENTS TABS --- */}
                             <Card className="bg-dark text-light border-secondary shadow">
-                                <Card.Header className="border-secondary">
+                                <Card.Header className="border-secondary d-flex justify-content-between align-items-center">
                                     <h4 className="mb-0 text-warning">Appointments Management</h4>
+                                    {apptLoading && <Spinner animation="border" size="sm" variant="warning" />}
                                 </Card.Header>
                                 <Card.Body>
                                     <Tabs defaultActiveKey="upcoming" id="owner-tabs" className="mb-3 custom-tabs">
@@ -226,7 +279,7 @@ const OwnerDashboard = () => {
                                             ) : (
                                                 <div className="text-center py-5 text-secondary">
                                                     <h5>No upcoming appointments.</h5>
-                                                    <p>Relax! Your schedule is clear.</p>
+                                                    <p>Relax! Your schedule for <strong>{selectedGarage.garageName}</strong> is clear.</p>
                                                 </div>
                                             )}
                                         </Tab>
@@ -266,7 +319,7 @@ const OwnerDashboard = () => {
                                                     </tbody>
                                                 </Table>
                                             ) : (
-                                                <div className="text-center py-5 text-secondary">No history found.</div>
+                                                <div className="text-center py-5 text-secondary">No history found for this garage.</div>
                                             )}
                                         </Tab>
 

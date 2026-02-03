@@ -34,7 +34,8 @@ const AdminDashboard = () => {
             const owners = ownersRes.data || [];
             
           
-            const pending = owners.filter(o => !o.isVerified);
+            const pending = owners.filter(o => !o.verified);
+            console.log(pending);
 
             setPendingOwners(pending);
             setStats({

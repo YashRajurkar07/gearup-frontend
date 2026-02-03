@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Form, Button, InputGroup, Spinner } from "react-bootstrap";
-import { Search, MapPin, Clock } from "lucide-react";
+import { Search, MapPin, Clock, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import AppNavbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import GarageService from "../../apis/GarageService";
+import RatingService from "../../apis/RatingService";
 
 const GarageBrowser = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [garages, setGarages] = useState([]);
+    const [ratings, setRatings] = useState({}); // Map: { garageId: { avg: 4.5, count: 10 } }
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -21,6 +23,7 @@ const GarageBrowser = () => {
         try {
             const res = await GarageService.getAllGarages();
             setGarages(res.data);
+            fetchRatings(res.data); // Fetch ratings for the loaded garages
         } catch (error) {
             console.error("Error loading garages:", error);
         } finally {
@@ -32,18 +35,47 @@ const GarageBrowser = () => {
         e.preventDefault();
         setLoading(true);
         try {
+            let data = [];
             if (!searchTerm.trim()) {
-                loadGarages();
+                const res = await GarageService.getAllGarages();
+                data = res.data;
             } else {
                 const res = await GarageService.getGarageByArea(searchTerm);
-                setGarages(res.data);
+                data = res.data;
             }
+            setGarages(data);
+            fetchRatings(data); // Fetch ratings for search results
         } catch (error) {
             console.error("Search failed:", error);
-            // setGarages(prev => prev.filter(g => g.city.includes(searchTerm))); 
+            setGarages([]);
         } finally {
             setLoading(false);
         }
+    };
+
+    // Helper to fetch ratings for a list of garages
+    const fetchRatings = async (garageList) => {
+        const ratingMap = {};
+        
+        // Use Promise.all to fetch data for all garages in parallel
+        await Promise.all(garageList.map(async (garage) => {
+            try {
+                // 1. Get Average
+                const avgRes = await RatingService.getAverageRating(garage.id);
+                // 2. Get List (to count total ratings)
+                const listRes = await RatingService.getRatingsByGarageId(garage.id);
+
+                ratingMap[garage.id] = {
+                    avg: avgRes.data || 0,
+                    count: listRes.data ? listRes.data.length : 0
+                };
+            } catch (error) {
+                // Fallback if no ratings or error
+                ratingMap[garage.id] = { avg: 0, count: 0 };
+            }
+        }));
+
+        setRatings(ratingMap);
     };
 
     return (
@@ -79,36 +111,56 @@ const GarageBrowser = () => {
                     ) : (
                         <Row className="g-4">
                             {garages.length > 0 ? (
-                                garages.map((garage) => (
-                                    <Col key={garage.id} md={6} lg={4}>
-                                        <Card className="h-100 bg-dark text-light border-secondary hover-shadow">
-                                            {/* Placeholder Image */}
-                                            <div style={{ height: "150px", backgroundColor: "#334155", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                <span className="text-secondary">Garage Image</span>
-                                            </div>
+                                garages.map((garage) => {
+                                    // Get rating info from state or default to 0
+                                    const ratingInfo = ratings[garage.id] || { avg: 0, count: 0 };
+                                    
+                                    return (
+                                        <Col key={garage.id} md={6} lg={4}>
+                                            <Card className="h-100 bg-dark text-light border-secondary hover-shadow">
+                                                {/* Placeholder Image */}
+                                                <div style={{ height: "150px", backgroundColor: "#334155", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                    <span className="text-secondary fw-bold fs-5">{garage.garageName.charAt(0)}</span>
+                                                </div>
 
-                                            <Card.Body>
-                                                <Card.Title className="fw-bold text-warning">{garage.garageName}</Card.Title>
-                                                <div className="d-flex align-items-center gap-2 text-secondary mb-2">
-                                                    <MapPin size={16} />
-                                                    <small>{garage.address?.area}, {garage.address?.city}</small>
-                                                </div>
-                                                <div className="d-flex align-items-center gap-2 text-secondary mb-3">
-                                                    <Clock size={16} />
-                                                    <small>{garage.openingTime} - {garage.closingTime}</small>
-                                                </div>
-                                                <div className="d-grid">
-                                                    <Button
-                                                        variant="outline-light"
-                                                        onClick={() => navigate(`/bookappointment/${garage.id}`)}
-                                                    >
-                                                        Book Appointment
-                                                    </Button>
-                                                </div>
-                                            </Card.Body>
-                                        </Card>
-                                    </Col>
-                                ))
+                                                <Card.Body>
+                                                    <div className="d-flex justify-content-between align-items-start mb-2">
+                                                        <Card.Title className="fw-bold text-warning mb-0">{garage.garageName}</Card.Title>
+                                                        
+                                                        {/* --- RATING BADGE --- */}
+                                                        <div className="d-flex align-items-center bg-secondary bg-opacity-25 px-2 py-1 rounded">
+                                                            <Star size={16} className="text-warning me-1" fill={ratingInfo.avg > 0 ? "#f59e0b" : "none"} />
+                                                            <span className="fw-bold me-1">
+                                                                {ratingInfo.avg > 0 ? ratingInfo.avg.toFixed(1) : "0"}
+                                                            </span>
+                                                            <span className="text-secondary small" style={{ fontSize: "0.75rem" }}>
+                                                                ({ratingInfo.count})
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="d-flex align-items-center gap-2 text-secondary mb-2">
+                                                        <MapPin size={16} />
+                                                        <small>{garage.address?.area}, {garage.address?.city}</small>
+                                                    </div>
+                                                    <div className="d-flex align-items-center gap-2 text-secondary mb-3">
+                                                        <Clock size={16} />
+                                                        <small>{garage.openingTime} - {garage.closingTime}</small>
+                                                    </div>
+                                                    
+                                                    <div className="d-grid">
+                                                        <Button
+                                                            variant="outline-light"
+                                                            onClick={() => navigate(`/bookappointment/${garage.id}`)}
+                                                        >
+                                                            Book Appointment
+                                                        </Button>
+                                                    </div>
+                                                </Card.Body>
+                                            </Card>
+                                        </Col>
+                                    );
+                                })
                             ) : (
                                 <div className="text-center text-secondary">
                                     <h4>No Garages Found</h4>

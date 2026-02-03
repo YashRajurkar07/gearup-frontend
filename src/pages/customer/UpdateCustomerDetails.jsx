@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from '../../components/Navbar';
 import Footer from "../../components/Footer";
 import CustomerService from "../../apis/CustomerService";
+// import AdminService from "../../apis/AdminService";
 import { getUserId } from "../../store/AuthHandler";
 
 
 const UpdateCustomerDetails = () => {
 
     const Navigate = useNavigate();
+    
 
     const [customerDetails, setCustomerDetails] = useState({
         userDetails: {
@@ -35,11 +37,12 @@ const UpdateCustomerDetails = () => {
 
         try {
             const myId = getUserId();
+           
             if(!myId) {
                 return;
             }
             const response = await CustomerService.getCustomerById(myId);
-            const prevData = response.data.find(c => c.userDetails.id === parseInt(myId));
+            const prevData = response.data;
             // setCustomerDetails(c=> ({ ...c, ...prevData }));
 
             setCustomerDetails(c => ({ ...c, userDetails: { ...c.userDetails, ...prevData.userDetails, address: { ...c.userDetails.address, ...prevData.userDetails.address } }, licenseNumber: prevData.licenseNumber }));
@@ -56,7 +59,6 @@ const UpdateCustomerDetails = () => {
     const handleDetailsInput = (e) => {
 
         const { name, value } = e.target;
-        // setCustomerDetails(c => ({ ...c, [name]: value }));
 
         if (['area', 'city', 'state', 'country', 'zipCode'].includes(name)) {
             setCustomerDetails(c => ({ ...c, userDetails: { ...c.userDetails, address: { ...c.userDetails.address, [name]: value } } }));
@@ -73,8 +75,8 @@ const UpdateCustomerDetails = () => {
         e.preventDefault();
 
         try {
-
-            const res = await CustomerService.registerCustomer(customerDetails);
+            const myId = getUserId();
+            const res = await CustomerService.updateCustomer(myId, customerDetails);
             alert(res.data.message);
             Navigate('/customerprofile');
 
@@ -97,33 +99,33 @@ const UpdateCustomerDetails = () => {
                                 <div className="row mb-3">
                                     <div className="col-md-6">
                                         <label className="form-label">First Name :</label>
-                                        <input type="text" className="form-control" name="firstName" value={customerDetails.firstName} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="firstName" value={customerDetails.userDetails.firstName} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label">Last Name :</label>
-                                        <input type="text" className="form-control" name="lastName" value={customerDetails.lastName} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="lastName" value={customerDetails.userDetails.lastName} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 
                                 <div className="row mb-3">
                                     <div className="col-md-6">
                                         <label className="form-label">Email :</label>
-                                        <input type="email" className="form-control" name="email" value={customerDetails.email} readOnly />
+                                        <input type="email" className="form-control" name="email" value={customerDetails.userDetails.email} readOnly />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label">Mobile Number :</label>
-                                        <input type="text" className="form-control" name="mobileNumber" value={customerDetails.mobileNumber} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="mobileNumber" value={customerDetails.userDetails.mobileNumber} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 
                                 <div className="row mb-3">
                                     <div className="col-md-6">
                                         <label className="form-label">Password :</label>
-                                        <input type="password" className="form-control" name="password" value={customerDetails.password} onChange={handleDetailsInput} />
+                                        <input type="password" className="form-control" name="password" value={customerDetails.userDetails.password} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label">Confirm Password :</label>
-                                        <input type="password" className="form-control" name="confirmPassword" value={customerDetails.confirmPassword} onChange={handleDetailsInput} />
+                                        <input type="password" className="form-control" name="confirmPassword" value={customerDetails.userDetails.confirmPassword} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 
@@ -137,11 +139,11 @@ const UpdateCustomerDetails = () => {
                                 <div className="row mb-3">
                                     <div className="col-md-6">
                                         <label className="form-label">Date of Birth :</label>
-                                        <input type="date" className="form-control" name="dateOfBirth" value={customerDetails.dateOfBirth} onChange={handleDetailsInput} />
+                                        <input type="date" className="form-control" name="dateOfBirth" value={customerDetails.userDetails.dateOfBirth} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label" name="gender">Gender :</label>
-                                        <select className="form-select" name="gender" value={customerDetails.gender} onChange={handleDetailsInput}>
+                                        <select className="form-select" name="gender" value={customerDetails.userDetails.gender} onChange={handleDetailsInput}>
                                             <option value="null">Select Gender</option>
                                             <option value="MALE">Male</option>
                                             <option value="FEMALE">Female</option>
@@ -153,26 +155,26 @@ const UpdateCustomerDetails = () => {
                                 <div className="row mb-3">
                                     <div className="col-md-4">
                                         <label className="form-label">Area :</label>
-                                        <input type="text" className="form-control" name="area" value={customerDetails.area} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="area" value={customerDetails.userDetails.address.area} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-4">
                                         <label className="form-label">City :</label>
-                                        <input type="text" className="form-control" name="city" value={customerDetails.city} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="city" value={customerDetails.userDetails.address.city} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-4">
                                         <label className="form-label">Zip Code :</label>
-                                        <input type="text" className="form-control" name="zipCode" value={customerDetails.zipCode} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="zipCode" value={customerDetails.userDetails.address.zipCode} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 
                                 <div className="row mb-4">
                                     <div className="col-md-6">
                                         <label className="form-label">State :</label>
-                                        <input type="text" className="form-control" name="state" value={customerDetails.state} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="state" value={customerDetails.userDetails.address.state} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label">Country :</label>
-                                        <input type="text" className="form-control" name="country" value={customerDetails.country} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="country" value={customerDetails.userDetails.address.country} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 

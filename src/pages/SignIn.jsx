@@ -46,7 +46,7 @@ const SignIn = () => {
 
         } catch (error) {
             console.error(error);
-            alert("Invalid Credentials or Server Error");
+            alert("Invalid Credentials, Please Try Again");
         }
     }
 

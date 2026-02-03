@@ -32,7 +32,7 @@ const AppNavbar = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto align-items-center gap-3">
-                        
+
                         {role === 'ROLE_ADMIN' && (
                             <>
                                 <Nav.Link as={Link} to="/admin/dashboard" className="text-warning fw-bold">Dashboard</Nav.Link>
@@ -45,6 +45,7 @@ const AppNavbar = () => {
                             <>
                                 <Nav.Link as={Link} to="/owner/dashboard" className="text-warning fw-bold">My Garages</Nav.Link>
                                 <Nav.Link as={Link} to="/registergarage" className="text-light">Add Garage</Nav.Link>
+                                <Nav.Link as={Link} to="/updateownerdetails" className="text-light">Update Profile</Nav.Link>
                             </>
                         )}
 
@@ -52,6 +53,7 @@ const AppNavbar = () => {
                             <>
                                 <Nav.Link as={Link} to="/customer/dashboard" className="text-warning fw-bold">My Bookings</Nav.Link>
                                 <Nav.Link as={Link} to="/garages" className="text-light">Find Garage</Nav.Link>
+                                <Nav.Link as={Link} to="/updatecustomerdetails" className="text-light">Update Profile</Nav.Link>
                             </>
                         )}
 
