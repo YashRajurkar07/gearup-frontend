@@ -3,12 +3,12 @@ import { Navigate, useParams } from "react-router-dom";
 import Navbar from '../../components/Navbar';
 import Footer from "../../components/Footer";
 import OwnerService from "../../apis/OwnerService";
-import AdminService from "../../apis/AdminService";
+// import AdminService from "../../apis/AdminService";
 import { getUserRole, getUserId } from "../../store/AuthHandler";
 
 const UpdateOwnerDetails = () => {
 
-    const role = getUserRole();
+    // const role = getUserRole();
 
 
     const [ownerDetails, setOwnerDetails] = useState({
@@ -71,6 +71,7 @@ const UpdateOwnerDetails = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const ownerId = getUserId();
             const res = await OwnerService.updateOwner(ownerId, ownerDetails);
             alert(res.data.message);
             Navigate('/owner/ownerdetails');
@@ -92,22 +93,22 @@ const UpdateOwnerDetails = () => {
                                 <div className="row mb-3">
                                     <div className="col-md-6">
                                         <label className="form-label">First Name :</label>
-                                        <input type="text" className="form-control" name="firstName" value={ownerDetails.firstName} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="firstName" value={ownerDetails.userDetails.firstName} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label">Last Name :</label>
-                                        <input type="text" className="form-control" name="lastName" value={ownerDetails.lastName} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="lastName" value={ownerDetails.userDetails.lastName} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 
                                 <div className="row mb-3">
                                     <div className="col-md-6">
                                         <label className="form-label">Email :</label>
-                                        <input type="email" className="form-control" name="email" value={ownerDetails.email} onChange={handleDetailsInput} />
+                                        <input type="email" className="form-control" name="email" value={ownerDetails.userDetails.email} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label">Mobile Number :</label>
-                                        <input type="text" className="form-control" name="mobileNumber" value={ownerDetails.mobileNumber} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="mobileNumber" value={ownerDetails.userDetails.mobileNumber} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 
@@ -125,22 +126,22 @@ const UpdateOwnerDetails = () => {
                                 <div className="row mb-3">
                                     <div className="col-md-6">
                                         <label className="form-label">Password :</label>
-                                        <input type="password" className="form-control" name="password" value={ownerDetails.password} onChange={handleDetailsInput} />
+                                        <input type="password" className="form-control" name="password" value={ownerDetails.userDetails.password} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label">Confirm Password :</label>
-                                        <input type="password" className="form-control" name="confirmPassword" value={ownerDetails.confirmPassword} onChange={handleDetailsInput} />
+                                        <input type="password" className="form-control" name="confirmPassword" value={ownerDetails.userDetails.confirmPassword} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 
                                 <div className="row mb-3">
                                     <div className="col-md-6">
                                         <label className="form-label">Date of Birth :</label>
-                                        <input type="date" className="form-control" name="dateOfBirth" value={ownerDetails.dateOfBirth} onChange={handleDetailsInput} />
+                                        <input type="date" className="form-control" name="dateOfBirth" value={ownerDetails.userDetails.dateOfBirth} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label">Gender :</label>
-                                        <select className="form-select" name="gender" value={ownerDetails.gender} onChange={handleDetailsInput}>
+                                        <select className="form-select" name="gender" value={ownerDetails.userDetails.gender} onChange={handleDetailsInput}>
                                             <option value="">Select Gender</option>
                                             <option value="MALE">Male</option>
                                             <option value="FEMALE">Female</option>
@@ -152,26 +153,26 @@ const UpdateOwnerDetails = () => {
                                 <div className="row mb-3">
                                     <div className="col-md-4">
                                         <label className="form-label">Area :</label>
-                                        <input type="text" className="form-control" name="area" value={ownerDetails.area} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="area" value={ownerDetails.userDetails.address.area} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-4">
                                         <label className="form-label">City :</label>
-                                        <input type="text" className="form-control" name="city" value={ownerDetails.city} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="city" value={ownerDetails.userDetails.address.city} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-4">
                                         <label className="form-label">Zip Code :</label>
-                                        <input type="text" className="form-control" name="zipCode" value={ownerDetails.zipCode} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="zipCode" value={ownerDetails.userDetails.address.zipCode} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 
                                 <div className="row mb-4">
                                     <div className="col-md-6">
                                         <label className="form-label">State :</label>
-                                        <input type="text" className="form-control" name="state" value={ownerDetails.state} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="state" value={ownerDetails.userDetails.address.state} onChange={handleDetailsInput} />
                                     </div>
                                     <div className="col-md-6">
                                         <label className="form-label">Country :</label>
-                                        <input type="text" className="form-control" name="country" value={ownerDetails.country} onChange={handleDetailsInput} />
+                                        <input type="text" className="form-control" name="country" value={ownerDetails.userDetails.address.country} onChange={handleDetailsInput} />
                                     </div>
                                 </div>
 
