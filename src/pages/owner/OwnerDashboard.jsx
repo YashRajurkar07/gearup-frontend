@@ -10,16 +10,13 @@ import { getUserId } from "../../store/AuthHandler";
 const OwnerDashboard = () => {
     const navigate = useNavigate();
     
-    // State for managing multiple garages
     const [garages, setGarages] = useState([]);
     const [selectedGarage, setSelectedGarage] = useState(null);
     
-    // State for the currently selected garage's data
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [apptLoading, setApptLoading] = useState(false);
 
-    // 1. Initial Load: Fetch All Garages for the Owner
     const loadOwnerGarages = async () => {
         setLoading(true);
         const ownerId = getUserId();
@@ -29,7 +26,6 @@ const OwnerDashboard = () => {
             
             setGarages(garageList);
 
-            // Automatically select the first garage if available
             if (garageList.length > 0) {
                 handleGarageChange(garageList[0]);
             }
@@ -40,7 +36,6 @@ const OwnerDashboard = () => {
         }
     };
 
-    // 2. Fetch Appointments for a specific Garage
     const fetchAppointments = async (garageId) => {
         setApptLoading(true);
         try {
@@ -54,18 +49,15 @@ const OwnerDashboard = () => {
         }
     };
 
-    // 3. Handle Garage Switch
     const handleGarageChange = (garage) => {
         setSelectedGarage(garage);
         fetchAppointments(garage.id);
     };
 
-    // Trigger initial load
     useEffect(() => {
         loadOwnerGarages();
     }, []);
 
-    // --- Action Handlers (Refreshes only the current garage's appointments) ---
 
     const handleAccept = async (appt) => {
         try {
@@ -79,7 +71,7 @@ const OwnerDashboard = () => {
              await AppointmentService.updateAppointmentStatus(appt.id, payload); 
              
             alert("Appointment Confirmed!");
-            fetchAppointments(selectedGarage.id); // Refresh list
+            fetchAppointments(selectedGarage.id); 
         } catch (error) {
             console.error("Error confirming:", error);
             alert("Failed to confirm. Ensure backend supports status updates.");
@@ -91,7 +83,7 @@ const OwnerDashboard = () => {
         try {
             await AppointmentService.markAppointmentAsCompleted(apptId);
             alert("Service Completed!");
-            fetchAppointments(selectedGarage.id); // Refresh list
+            fetchAppointments(selectedGarage.id); 
         } catch (error) {
             console.error("Error updating status:", error);
             alert("Failed to update status: " + (error.response?.data?.message || "Unknown error"));
@@ -103,7 +95,7 @@ const OwnerDashboard = () => {
         try {
             await AppointmentService.cancelAppointment(apptId);
             alert("Appointment Cancelled.");
-            fetchAppointments(selectedGarage.id); // Refresh list
+            fetchAppointments(selectedGarage.id); 
         } catch (error) {
             console.error("Error cancelling:", error);
             alert("Failed to cancel appointment.");
@@ -112,7 +104,6 @@ const OwnerDashboard = () => {
 
     const formatDate = (dateString) => new Date(dateString).toLocaleDateString();
     
-    // Filter appointments for the *Selected* Garage
     const activeAppointments = appointments.filter(a => a.status === 'PENDING' || a.status === 'CONFIRMED');
     const historyAppointments = appointments.filter(a => a.status === 'COMPLETED' || a.status === 'CANCELLED');
 

@@ -11,7 +11,7 @@ const GarageBrowser = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [garages, setGarages] = useState([]);
-    const [ratings, setRatings] = useState({}); // Map: { garageId: { avg: 4.5, count: 10 } }
+    const [ratings, setRatings] = useState({}); 
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -23,7 +23,7 @@ const GarageBrowser = () => {
         try {
             const res = await GarageService.getAllGarages();
             setGarages(res.data);
-            fetchRatings(res.data); // Fetch ratings for the loaded garages
+            fetchRatings(res.data); 
         } catch (error) {
             console.error("Error loading garages:", error);
         } finally {
@@ -44,7 +44,7 @@ const GarageBrowser = () => {
                 data = res.data;
             }
             setGarages(data);
-            fetchRatings(data); // Fetch ratings for search results
+            fetchRatings(data); 
         } catch (error) {
             console.error("Search failed:", error);
             setGarages([]);
@@ -53,16 +53,14 @@ const GarageBrowser = () => {
         }
     };
 
-    // Helper to fetch ratings for a list of garages
     const fetchRatings = async (garageList) => {
         const ratingMap = {};
         
-        // Use Promise.all to fetch data for all garages in parallel
         await Promise.all(garageList.map(async (garage) => {
             try {
-                // 1. Get Average
+                
                 const avgRes = await RatingService.getAverageRating(garage.id);
-                // 2. Get List (to count total ratings)
+                
                 const listRes = await RatingService.getRatingsByGarageId(garage.id);
 
                 ratingMap[garage.id] = {
@@ -70,8 +68,9 @@ const GarageBrowser = () => {
                     count: listRes.data ? listRes.data.length : 0
                 };
             } catch (error) {
-                // Fallback if no ratings or error
+                
                 ratingMap[garage.id] = { avg: 0, count: 0 };
+                console.log(error);
             }
         }));
 
@@ -112,7 +111,7 @@ const GarageBrowser = () => {
                         <Row className="g-4">
                             {garages.length > 0 ? (
                                 garages.map((garage) => {
-                                    // Get rating info from state or default to 0
+                                    
                                     const ratingInfo = ratings[garage.id] || { avg: 0, count: 0 };
                                     
                                     return (
